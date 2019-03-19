@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace DelegateExempel
 {
@@ -11,11 +12,17 @@ namespace DelegateExempel
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Button b;
+        Texture2D pixel;
+        List<Button> buttons = new List<Button>();
+        System.Random rand = new System.Random();
+        MouseState oldMouse;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            IsMouseVisible = true;
         }
 
         /// <summary>
@@ -26,6 +33,8 @@ namespace DelegateExempel
         /// </summary>
         protected override void Initialize()
         {
+            CreateTexture();
+            b = new Button(pixel, new Vector2(400 - 80 / 2, 240 - 30 / 2), new Vector2(80, 30), OnClick);
             // TODO: Add your initialization logic here
 
             base.Initialize();
@@ -61,9 +70,13 @@ namespace DelegateExempel
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+            // När man klickar på knappen ska OnClick anropas
+            if (Mouse.GetState().LeftButton == ButtonState.Pressed && oldMouse.LeftButton == ButtonState.Released)
+                if (b.ClickBox.Contains(Mouse.GetState().Position))
+                    b.OnClick();
 
             // TODO: Add your update logic here
-
+            oldMouse = Mouse.GetState();
             base.Update(gameTime);
         }
 
@@ -75,9 +88,38 @@ namespace DelegateExempel
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            spriteBatch.Begin();
+            b.Draw(spriteBatch);
+            foreach (var item in buttons)
+            {
+                item.Draw(spriteBatch);
+            }
+            spriteBatch.End();
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
+        }
+
+        /// <summary>
+        /// Metoden som knappen använder sig av
+        /// </summary>
+        void OnClick()
+        {
+            Vector2 pos = new Vector2(rand.Next(800),rand.Next(480));
+            Vector2 size = new Vector2(rand.Next(100), rand.Next(50));
+            buttons.Add(new Button(pixel, pos, size, OnClick));
+        }
+
+        /// <summary>
+        /// Skapa pixel
+        /// </summary>
+        void CreateTexture()
+        {
+            // Skapa texturobjektet.
+            pixel = new Texture2D(GraphicsDevice, 1, 1);
+
+            // Skicka in datan, i det här fallet färg.
+            pixel.SetData(new Color[] { Color.White });
         }
     }
 }
