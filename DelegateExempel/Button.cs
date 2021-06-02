@@ -43,6 +43,7 @@ namespace DelegateExempel
             function.Invoke();
         }
 
+        //Test
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(texture, ClickBox, Color.White);
