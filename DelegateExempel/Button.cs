@@ -46,6 +46,7 @@ namespace DelegateExempel
         //Test
         public void Draw(SpriteBatch spriteBatch)
         {
+            //New Test
             spriteBatch.Draw(texture, ClickBox, Color.White);
         }
     }
